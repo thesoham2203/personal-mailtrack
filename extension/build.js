@@ -39,9 +39,15 @@ async function build() {
     }
   }
 
-  // Create icons folder with SVG/PNG icons
+  // Create icons folder and copy icons
   const iconDir = path.join(distDir, "icons");
   if (!fs.existsSync(iconDir)) fs.mkdirSync(iconDir, { recursive: true });
+  const srcIconDir = path.join(__dirname, "icons");
+  if (fs.existsSync(srcIconDir)) {
+    for (const file of fs.readdirSync(srcIconDir)) {
+      fs.copyFileSync(path.join(srcIconDir, file), path.join(iconDir, file));
+    }
+  }
 
   console.log("Extension build completed successfully in ./dist!");
 }

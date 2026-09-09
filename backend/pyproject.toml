@@ -38,3 +38,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 ignore = ["B008", "BLE001", "S110", "ASYNC230"]
+
+# ADD THIS SECTION TO FIX THE ERROR
+[tool.setuptools]
+packages = ["app", "storage", "supabase"] 

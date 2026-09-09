@@ -1,4 +1,9 @@
 pyproject.toml
+app/__init__.py
+app/cli.py
+app/config.py
+app/database.py
+app/main.py
 personal_mailtrack.egg-info/PKG-INFO
 personal_mailtrack.egg-info/SOURCES.txt
 personal_mailtrack.egg-info/dependency_links.txt
