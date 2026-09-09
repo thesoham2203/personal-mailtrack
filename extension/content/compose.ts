@@ -46,6 +46,11 @@ export async function setupComposeDialog(composeEl: HTMLElement): Promise<void> 
   );
 
   // 3. Inject Tracking Toggle Button beside Send
+  // Check if toolbar already has our controls
+  if (toolbar.querySelector(".pm-compose-controls")) {
+    return;
+  }
+
   const settings = await getSettings();
 
   const container = document.createElement("div");
@@ -64,18 +69,20 @@ export async function setupComposeDialog(composeEl: HTMLElement): Promise<void> 
   toggleBtn.style.background = "none";
   toggleBtn.style.border = "1px solid #dadce0";
   toggleBtn.style.borderRadius = "4px";
-  toggleBtn.style.padding = "4px 8px";
+  toggleBtn.style.padding = "4px 10px";
   toggleBtn.style.cursor = "pointer";
-  toggleBtn.style.display = "flex";
+  toggleBtn.style.display = "inline-flex";
   toggleBtn.style.alignItems = "center";
   toggleBtn.style.gap = "4px";
+  toggleBtn.style.fontWeight = "500";
+  toggleBtn.style.transition = "all 0.15s ease";
 
   const updateToggleUI = (enabled: boolean) => {
     toggleBtn.innerHTML = enabled
-      ? `<span style="color: #1a73e8; font-weight: bold;">✓✓ Tracked</span>`
+      ? `<span style="color: #0b8043; font-weight: 600;">✓ Tracked</span>`
       : `<span style="color: #5f6368;">✗ Untracked</span>`;
-    toggleBtn.style.borderColor = enabled ? "#1a73e8" : "#dadce0";
-    toggleBtn.style.backgroundColor = enabled ? "#e8f0fe" : "transparent";
+    toggleBtn.style.borderColor = enabled ? "#34a853" : "#dadce0";
+    toggleBtn.style.backgroundColor = enabled ? "#e6f4ea" : "#f1f3f4";
   };
 
   updateToggleUI(settings.trackingEnabled);
@@ -94,3 +101,4 @@ export async function setupComposeDialog(composeEl: HTMLElement): Promise<void> 
   // Insert into toolbar
   toolbar.appendChild(container);
 }
+

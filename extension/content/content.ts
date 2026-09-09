@@ -25,6 +25,10 @@ function scanGmailDOM(): void {
   const composeViews = document.querySelectorAll('div[role="dialog"], div.M9');
   composeViews.forEach((el) => {
     if (el instanceof HTMLElement) {
+      // If this is an inner container (.M9) and its parent dialog is already present, skip
+      if (el.classList.contains("M9") && el.closest('div[role="dialog"]')) {
+        return;
+      }
       const sendBtn = queryWithFallback<HTMLElement>(el, "sendButton");
       if (sendBtn) {
         setupComposeDialog(el);
