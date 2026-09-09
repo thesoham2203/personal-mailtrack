@@ -2,7 +2,6 @@
 name = "personal-mailtrack"
 version = "0.1.0"
 description = "Personal Mailtrack / Mailsuite-style email productivity suite"
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
@@ -39,6 +38,6 @@ target-version = "py312"
 [tool.ruff.lint]
 ignore = ["B008", "BLE001", "S110", "ASYNC230"]
 
-# ADD THIS SECTION TO FIX THE ERROR
-[tool.setuptools]
-packages = ["app", "storage", "supabase"] 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
