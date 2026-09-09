@@ -120,8 +120,8 @@ def main():
     elif len(sys.argv) > 1 and sys.argv[1] == "cleanup":
         asyncio.run(run_cleanup())
     elif len(sys.argv) > 1 and sys.argv[1] == "seed":
-        from app.services.demo.generator import seed_demo_data
         from app.routers.emails import get_current_user_id
+        from app.services.demo.generator import seed_demo_data
 
         async def run_seed():
             async with AsyncSessionLocal() as session:

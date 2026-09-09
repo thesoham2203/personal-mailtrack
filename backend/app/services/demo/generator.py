@@ -1,20 +1,19 @@
 """Synthetic Demo Data Generator for Personal Mailtrack. (PRD Requirement 14)."""
 
-from datetime import datetime, timezone, timedelta
-from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import UTC, datetime, timedelta
+
 from sqlalchemy import select
-from app.models.profiles import Profile
-from app.models.tracked_emails import TrackedEmail, EmailRecipient, TrackedLink
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.contacts import Contact
-from app.models.campaigns import Campaign, CampaignRecipient
-from app.models.documents import Document, DocumentShare, DocumentEvent
-from app.models.events import OpenEvent, ClickEvent, ReplyEvent, ActivityEvent
-from app.security.tracking_tokens import token_manager
+from app.models.documents import Document, DocumentEvent, DocumentShare
+from app.models.events import ActivityEvent
+from app.models.tracked_emails import EmailRecipient, TrackedEmail
 
 
 async def seed_demo_data(session: AsyncSession, user_id: str) -> dict:
     """Generates rich, realistic synthetic activity for dashboard exploration."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     # 1. Seed Contacts
     demo_contacts = [

@@ -5,6 +5,9 @@
 
 import { getSettings } from "../shared/storage";
 import { ActivityEventSummary } from "../shared/types";
+import { setupPeriodicSync, handleAlarmFired, syncActivity } from "./sync";
+import { showNotification, NotificationPayload } from "./notifications";
+import { getAuthState } from "./auth";
 
 let lastCheckedActivityTime = new Date().toISOString();
 
@@ -53,14 +56,69 @@ async function reconcileActivityEvents(): Promise<void> {
   }
 }
 
-// Periodic check every 30 seconds
+// ---------------------------------------------------------------------------
+// Alarms
+// ---------------------------------------------------------------------------
+
+// Legacy reconciliation alarm (every 30 seconds).
 chrome.alarms.create("pm_reconcile_alarm", { periodInMinutes: 0.5 });
+
+// New structured sync alarm (every 1 minute).
+setupPeriodicSync();
+
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "pm_reconcile_alarm") {
     reconcileActivityEvents();
   }
+  // Delegate all other alarms (including 'mailtrack-sync') to sync module.
+  handleAlarmFired(alarm.name);
 });
+
+// ---------------------------------------------------------------------------
+// Lifecycle
+// ---------------------------------------------------------------------------
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log("[Personal Mailtrack] Service worker installed.");
+  // Re-register the periodic sync alarm on install / update.
+  setupPeriodicSync();
 });
+
+// ---------------------------------------------------------------------------
+// Message passing — handles requests from popup, options page & content scripts
+// ---------------------------------------------------------------------------
+
+chrome.runtime.onMessage.addListener(
+  (
+    message: { type: string; payload?: unknown },
+    _sender,
+    sendResponse: (response?: unknown) => void
+  ) => {
+    switch (message.type) {
+      case "SHOW_NOTIFICATION": {
+        showNotification(message.payload as NotificationPayload)
+          .then(() => sendResponse({ ok: true }))
+          .catch((err) => sendResponse({ ok: false, error: String(err) }));
+        return true; // Keep the message channel open for the async response.
+      }
+
+      case "TRIGGER_SYNC": {
+        syncActivity()
+          .then(() => sendResponse({ ok: true }))
+          .catch((err) => sendResponse({ ok: false, error: String(err) }));
+        return true;
+      }
+
+      case "GET_AUTH_STATE": {
+        getAuthState()
+          .then((state) => sendResponse(state))
+          .catch((err) => sendResponse({ error: String(err) }));
+        return true;
+      }
+
+      default:
+        // Unknown message type — ignore.
+        return false;
+    }
+  }
+);

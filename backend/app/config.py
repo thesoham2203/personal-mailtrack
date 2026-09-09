@@ -61,5 +61,9 @@ class Settings(BaseSettings):
     feature_webhooks: bool = Field(default=True, alias="FEATURE_WEBHOOKS")
     feature_ai: bool = Field(default=False, alias="FEATURE_AI")
 
+    # Personal auth
+    extension_api_key: str = Field(default="", alias="EXTENSION_API_KEY")  # if empty, all local requests allowed
+    personal_user_id: str = Field(default="00000000-0000-0000-0000-000000000001", alias="PERSONAL_USER_ID")
+
 
 settings = Settings()

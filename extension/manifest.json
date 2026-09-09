@@ -5,7 +5,8 @@
   "description": "Personal Gmail email tracking, checkmarks, and productivity suite for Brave & Chromium.",
   "permissions": [
     "storage",
-    "notifications"
+    "notifications",
+    "alarms"
   ],
   "host_permissions": [
     "https://mail.google.com/*",

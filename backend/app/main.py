@@ -42,13 +42,19 @@ app.add_middleware(
 
 from app.routers import (
     analytics,
+    auth,
+    automations,
     campaigns,
     contacts,
     diagnostics,
     documents,
     emails,
+    followup,
+    gmail,
+    notifications,
     templates,
     tracking,
+    webhooks,
 )
 
 # Mount public tracking routes (/t/o, /t/c, /u, /d) and API routes
@@ -60,6 +66,12 @@ app.include_router(campaigns.router)
 app.include_router(templates.router)
 app.include_router(analytics.router)
 app.include_router(diagnostics.router)
+app.include_router(auth.router)
+app.include_router(gmail.router)
+app.include_router(followup.router)
+app.include_router(notifications.router)
+app.include_router(automations.router)
+app.include_router(webhooks.router)
 
 
 @app.get("/health", tags=["System"])
