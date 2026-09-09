@@ -1,6 +1,6 @@
-# Personal Mailtrack / Mailsuite-Style Email Productivity Suite
+# Personal Mailtrack 
 
-A clean-room, personal-use Gmail email tracking, productivity, and analytics system inspired by the premium feature set of Mailtrack/Mailsuite.
+A clean-room, personal-use Gmail email tracking, productivity, and analytics system inspired by the premium feature set of Mailtrack
 
 Built from the ground up with **Python 3.12+ / FastAPI**, **Supabase / PostgreSQL & Async SQLite**, **Chromium Manifest V3 (Brave Desktop + Gmail Web)**, and **React 18 + TypeScript + Tailwind CSS**.
 
