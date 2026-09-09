@@ -74,9 +74,10 @@ app.include_router(automations.router)
 app.include_router(webhooks.router)
 
 
-@app.get("/health", tags=["System"])
+@app.api_route("/health", methods=["GET", "HEAD"], tags=["System"])
+@app.api_route("/", methods=["GET", "HEAD"], tags=["System"])
 async def health_check():
-    """Health check endpoint."""
+    """Health check endpoint supporting GET and HEAD for monitoring tools."""
     return {
         "status": "healthy",
         "app_env": settings.app_env,
