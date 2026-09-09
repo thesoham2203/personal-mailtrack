@@ -1,0 +1,12 @@
+{
+  "name": "personal-mailtrack-extension",
+  "version": "0.1.0",
+  "description": "Personal Mailtrack / Mailsuite-style Chromium Manifest V3 extension for Brave Desktop + Gmail Web",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.4"
+  }
+}

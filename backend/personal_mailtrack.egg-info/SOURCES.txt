@@ -1,0 +1,6 @@
+pyproject.toml
+personal_mailtrack.egg-info/PKG-INFO
+personal_mailtrack.egg-info/SOURCES.txt
+personal_mailtrack.egg-info/dependency_links.txt
+personal_mailtrack.egg-info/requires.txt
+personal_mailtrack.egg-info/top_level.txt

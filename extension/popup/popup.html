@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Personal Mailtrack</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <span class="check-icon">✓✓</span>
+      <h2>Personal Mailtrack</h2>
+    </div>
+    <div id="backend-status" class="status-pill checking">Connecting...</div>
+  </div>
+
+  <div class="toggle-card">
+    <div class="toggle-row">
+      <span>Email Tracking</span>
+      <label class="switch">
+        <input type="checkbox" id="tracking-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <span>Link Tracking</span>
+      <label class="switch">
+        <input type="checkbox" id="link-tracking-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <span>Desktop Notifications</span>
+      <label class="switch">
+        <input type="checkbox" id="notifications-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="section-title">Recent Activity</div>
+  <div id="activity-feed" class="activity-feed">
+    <div class="loading">Loading recent opens & clicks...</div>
+  </div>
+
+  <div class="footer">
+    <a href="#" id="open-dashboard-btn" class="btn btn-primary">Open Full Dashboard</a>
+    <a href="#" id="open-options-btn" class="btn btn-secondary">Settings</a>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
