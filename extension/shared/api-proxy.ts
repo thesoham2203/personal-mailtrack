@@ -21,11 +21,26 @@ export async function proxyFetch(
   url: string,
   options: { method?: string; headers?: Record<string, string>; body?: string } = {}
 ): Promise<{ ok: boolean; status: number; json: () => unknown; text: () => string }> {
-  // 1. Try proxying through the service worker (bypasses CORS via host_permissions)
+  // 1. Direct fetch (fastest, independent of service worker lifecycle)
+  // Backend CORS explicitly allows https://mail.google.com
   try {
+    const directRes = await fetch(url, {
+      method: options.method || "GET",
+      headers: options.headers || {},
+      body: options.body,
+    });
+    const textBody = await directRes.text();
+    return {
+      ok: directRes.ok,
+      status: directRes.status,
+      text: () => textBody,
+      json: () => JSON.parse(textBody),
+    };
+  } catch (directErr) {
+    // 2. Service worker proxy fallback (if direct fetch blocked or network error)
     if (typeof chrome !== "undefined" && chrome?.runtime?.sendMessage && chrome?.runtime?.id) {
-      const result = await new Promise<ProxyResponse>((resolve, reject) => {
-        try {
+      try {
+        const result = await new Promise<ProxyResponse>((resolve, reject) => {
           chrome.runtime.sendMessage(
             {
               type: "FETCH_API",
@@ -48,44 +63,25 @@ export async function proxyFetch(
               resolve(response);
             }
           );
-        } catch (sendErr) {
-          reject(sendErr);
+        });
+
+        if (result.error && result.status === 0) {
+          throw new Error(result.error);
         }
-      });
 
-      if (result.error && result.status === 0) {
-        throw new Error(result.error);
+        return {
+          ok: result.ok,
+          status: result.status,
+          text: () => result.body,
+          json: () => JSON.parse(result.body),
+        };
+      } catch {
+        // Fall through to throw original direct fetch error
       }
-
-      return {
-        ok: result.ok,
-        status: result.status,
-        text: () => result.body,
-        json: () => JSON.parse(result.body),
-      };
     }
-  } catch (proxyErr) {
-    // If service worker is sleeping, extension was reloaded (context invalidated),
-    // or sendMessage failed, seamlessly fall back to direct fetch.
-    // This succeeds because the backend CORS policy explicitly allows https://mail.google.com.
-    console.warn(
-      "[Personal Mailtrack] Service worker proxy unavailable, falling back to direct fetch:",
-      proxyErr
-    );
-  }
 
-  // 2. Direct fetch fallback
-  const directRes = await fetch(url, {
-    method: options.method || "GET",
-    headers: options.headers || {},
-    body: options.body,
-  });
-  const textBody = await directRes.text();
-  return {
-    ok: directRes.ok,
-    status: directRes.status,
-    text: () => textBody,
-    json: () => JSON.parse(textBody),
-  };
+    throw directErr;
+  }
 }
+
 
