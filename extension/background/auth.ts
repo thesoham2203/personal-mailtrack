@@ -70,7 +70,7 @@ export async function getAuthState(): Promise<AuthState> {
 
   return {
     isLoggedIn: (result[STORAGE_KEYS.IS_LOGGED_IN] as boolean) === true,
-    apiBaseUrl: (result[STORAGE_KEYS.API_BASE_URL] as string) || "http://localhost:8000",
+    apiBaseUrl: (result[STORAGE_KEYS.API_BASE_URL] as string) || "https://personal-mailtrack-api.onrender.com",
     apiKey: (result[STORAGE_KEYS.API_KEY] as string) || "",
     userId: (result[STORAGE_KEYS.USER_ID] as string | undefined) ?? null,
   };
@@ -105,7 +105,7 @@ export async function saveConnectionSettings(
   if (!ok) {
     // Roll back to previous values.
     await storageSet({
-      [STORAGE_KEYS.API_BASE_URL]: previous[STORAGE_KEYS.API_BASE_URL] ?? "http://localhost:8000",
+      [STORAGE_KEYS.API_BASE_URL]: previous[STORAGE_KEYS.API_BASE_URL] ?? "https://personal-mailtrack-api.onrender.com",
       [STORAGE_KEYS.API_KEY]: previous[STORAGE_KEYS.API_KEY] ?? "",
     });
     throw new Error(
@@ -132,7 +132,7 @@ export async function logout(): Promise<void> {
  */
 export async function getApiBaseUrl(): Promise<string> {
   const result = await storageGet<Record<string, unknown>>([STORAGE_KEYS.API_BASE_URL]);
-  return (result[STORAGE_KEYS.API_BASE_URL] as string) || "http://localhost:8000";
+  return (result[STORAGE_KEYS.API_BASE_URL] as string) || "https://personal-mailtrack-api.onrender.com";
 }
 
 /**

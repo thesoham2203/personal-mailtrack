@@ -5,6 +5,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { Download, ShieldCheck, Clock } from "lucide-react";
+import { API_BASE } from "../services/api";
 
 interface DocMetadata {
   title: string;
@@ -30,7 +31,7 @@ export const DocumentViewer: React.FC<{ shareToken: string }> = ({ shareToken })
     const payload = { events: [...bufferRef.current] };
     bufferRef.current = [];
 
-    const url = `/d/${shareToken}/event`;
+    const url = `${API_BASE}/d/${shareToken}/event`;
     if (navigator.sendBeacon) {
       navigator.sendBeacon(url, new Blob([JSON.stringify(payload)], { type: "application/json" }));
     } else {
@@ -61,7 +62,7 @@ export const DocumentViewer: React.FC<{ shareToken: string }> = ({ shareToken })
 
   useEffect(() => {
     // 1. Fetch document metadata
-    fetch(`/d/${shareToken}`)
+    fetch(`${API_BASE}/d/${shareToken}`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Document link expired or invalid.");
         return res.json();

@@ -44,7 +44,7 @@ async function getStorageValues(): Promise<{ apiBaseUrl: string; apiKey: string 
   return new Promise((resolve) => {
     chrome.storage.local.get(["apiBaseUrl", "apiKey"], (result) => {
       resolve({
-        apiBaseUrl: (result["apiBaseUrl"] as string) || "http://localhost:8000",
+        apiBaseUrl: (result["apiBaseUrl"] as string) || "https://personal-mailtrack-api.onrender.com",
         apiKey: (result["apiKey"] as string) || "",
       });
     });

@@ -2,7 +2,9 @@
  * Typed API Client for Personal Mailtrack Backend.
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+export const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "https://personal-mailtrack-api.onrender.com" : "");
 
 export async function fetchSummary(days = 30) {
   const res = await fetch(`${API_BASE}/api/v1/analytics/summary?days=${days}`);

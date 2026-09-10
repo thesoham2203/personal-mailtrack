@@ -24,17 +24,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Strict CORS configuration
+# Comprehensive CORS configuration supporting Gmail Web, Cloudflare Pages, local dev, and Chrome extensions
 origins = [
     "https://mail.google.com",
+    "https://personal-mailtrack.pages.dev",
+    "https://personal-mailtrack-api.onrender.com",
     settings.app_base_url,
+    settings.api_base_url,
     "http://localhost:5173",
     "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"^(chrome-extension://.*|https://.*\.pages\.dev|https://mail\.google\.com|http://localhost:\d+|http://127\.0\.0\.1:\d+)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
