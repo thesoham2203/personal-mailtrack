@@ -1,5 +1,6 @@
 """FastAPI Main Application Entry Point."""
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -8,6 +9,8 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.database import init_db
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -103,14 +106,14 @@ async def health_check():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Global exception handler to avoid leaking stack traces."""
-    # Never leak internal database or system details to client
+    """Global exception handler to log errors and avoid leaking internal details."""
+    logger.exception("Unhandled server exception on %s %s: %s", request.method, request.url.path, exc)
     return JSONResponse(
         status_code=500,
         content={
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": "An unexpected error occurred. Please check server logs.",
+                "message": f"An unexpected error occurred: {type(exc).__name__} - {str(exc)}",
             }
         },
     )

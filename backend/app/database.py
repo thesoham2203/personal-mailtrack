@@ -27,6 +27,8 @@ _db_url = settings.database_url
 if _is_sqlite:
     connect_args["check_same_thread"] = False
 else:
+    # Disable prepared statement caching for compatibility with PgBouncer/Supavisor poolers
+    connect_args["statement_cache_size"] = 0
     # Strip any ?ssl=... query param from URL; pass SSL mode via connect_args
     if "?ssl=" in _db_url:
         _db_url, ssl_val = _db_url.split("?ssl=", 1)
