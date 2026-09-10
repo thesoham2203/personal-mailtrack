@@ -21,45 +21,71 @@ export async function proxyFetch(
   url: string,
   options: { method?: string; headers?: Record<string, string>; body?: string } = {}
 ): Promise<{ ok: boolean; status: number; json: () => unknown; text: () => string }> {
-  return new Promise((resolve, reject) => {
-    try {
-      if (typeof chrome === "undefined" || !chrome?.runtime?.sendMessage) {
-        reject(new Error("Extension context unavailable"));
-        return;
-      }
-      chrome.runtime.sendMessage(
-        {
-          type: "FETCH_API",
-          payload: {
-            url,
-            method: options.method || "GET",
-            headers: options.headers || {},
-            body: options.body,
-          },
-        },
-        (response: ProxyResponse) => {
-          if (chrome.runtime?.lastError) {
-            reject(new Error(chrome.runtime.lastError.message));
-            return;
-          }
-          if (!response) {
-            reject(new Error("No response from service worker"));
-            return;
-          }
-          if (response.error && response.status === 0) {
-            reject(new Error(response.error));
-            return;
-          }
-          resolve({
-            ok: response.ok,
-            status: response.status,
-            text: () => response.body,
-            json: () => JSON.parse(response.body),
-          });
+  // 1. Try proxying through the service worker (bypasses CORS via host_permissions)
+  try {
+    if (typeof chrome !== "undefined" && chrome?.runtime?.sendMessage && chrome?.runtime?.id) {
+      const result = await new Promise<ProxyResponse>((resolve, reject) => {
+        try {
+          chrome.runtime.sendMessage(
+            {
+              type: "FETCH_API",
+              payload: {
+                url,
+                method: options.method || "GET",
+                headers: options.headers || {},
+                body: options.body,
+              },
+            },
+            (response: ProxyResponse) => {
+              if (chrome.runtime?.lastError) {
+                reject(new Error(chrome.runtime.lastError.message));
+                return;
+              }
+              if (!response) {
+                reject(new Error("No response from service worker"));
+                return;
+              }
+              resolve(response);
+            }
+          );
+        } catch (sendErr) {
+          reject(sendErr);
         }
-      );
-    } catch (err) {
-      reject(err);
+      });
+
+      if (result.error && result.status === 0) {
+        throw new Error(result.error);
+      }
+
+      return {
+        ok: result.ok,
+        status: result.status,
+        text: () => result.body,
+        json: () => JSON.parse(result.body),
+      };
     }
+  } catch (proxyErr) {
+    // If service worker is sleeping, extension was reloaded (context invalidated),
+    // or sendMessage failed, seamlessly fall back to direct fetch.
+    // This succeeds because the backend CORS policy explicitly allows https://mail.google.com.
+    console.warn(
+      "[Personal Mailtrack] Service worker proxy unavailable, falling back to direct fetch:",
+      proxyErr
+    );
+  }
+
+  // 2. Direct fetch fallback
+  const directRes = await fetch(url, {
+    method: options.method || "GET",
+    headers: options.headers || {},
+    body: options.body,
   });
+  const textBody = await directRes.text();
+  return {
+    ok: directRes.ok,
+    status: directRes.status,
+    text: () => textBody,
+    json: () => JSON.parse(textBody),
+  };
 }
+
