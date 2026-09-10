@@ -5,6 +5,7 @@
 
 import { queryWithFallback } from "./selectors";
 import { getSettings } from "../shared/storage";
+import { proxyFetch } from "../shared/api-proxy";
 import { EmailRegisterPayload, EmailRegisterResponse, RecipientInfo } from "../shared/types";
 
 // Double-send prevention map keyed by compose element
@@ -119,13 +120,13 @@ export async function handleInterceptedSend(
   );
 
   try {
-    const responsePromise = fetch(`${settings.apiBaseUrl}/api/v1/emails`, {
+    const responsePromise = proxyFetch(`${settings.apiBaseUrl}/api/v1/emails`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).then(async (res) => {
+    }).then((res) => {
       if (!res.ok) throw new Error(`Backend error status ${res.status}`);
-      return (await res.json()) as EmailRegisterResponse;
+      return res.json() as EmailRegisterResponse;
     });
 
     const regData = await Promise.race([responsePromise, timeoutPromise]);

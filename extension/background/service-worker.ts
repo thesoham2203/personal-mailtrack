@@ -116,6 +116,24 @@ chrome.runtime.onMessage.addListener(
         return true;
       }
 
+      case "FETCH_API": {
+        // Proxy API fetches from content scripts through the service worker.
+        // The service worker has host_permissions and bypasses CORS entirely.
+        const { url, method = "GET", headers: reqHeaders = {}, body } = message.payload as {
+          url: string;
+          method?: string;
+          headers?: Record<string, string>;
+          body?: string;
+        };
+        fetch(url, { method, headers: reqHeaders, body })
+          .then(async (res) => {
+            const text = await res.text();
+            sendResponse({ ok: res.ok, status: res.status, body: text });
+          })
+          .catch((err) => sendResponse({ ok: false, status: 0, error: String(err) }));
+        return true; // async response
+      }
+
       default:
         // Unknown message type — ignore.
         return false;

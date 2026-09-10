@@ -5,6 +5,8 @@
 
 import { queryAllWithFallback } from "./selectors";
 import { getSettings } from "../shared/storage";
+import { proxyFetch } from "../shared/api-proxy";
+
 
 interface EmailSummary {
   id: string;
@@ -30,9 +32,10 @@ async function refreshTrackedEmailsCache(): Promise<void> {
 
   const settings = await getSettings();
   try {
-    const res = await fetch(`${settings.apiBaseUrl}/api/v1/emails?limit=100`);
+    const res = await proxyFetch(`${settings.apiBaseUrl}/api/v1/emails?limit=100`);
     if (!res.ok) return;
-    const list: EmailSummary[] = await res.json();
+    const list: EmailSummary[] = res.json() as EmailSummary[];
+
     cachedEmails.clear();
     for (const item of list) {
       if (item.subject) {
