@@ -10,8 +10,11 @@ import { TemplatesPage } from "./pages/TemplatesPage";
 import { ReportsPage } from "./pages/ReportsPage";
 import { SetupDoctorPage } from "./pages/SetupDoctorPage";
 import { DocumentViewer } from "./viewer/DocumentViewer";
+import { LoginPage } from "./pages/LoginPage";
+import { isAuthenticated, logout } from "./services/auth";
 
 export const App: React.FC = () => {
+  const [isAuthed, setIsAuthed] = useState<boolean>(() => isAuthenticated());
   const [activeTab, setActiveTab] = useState<string>("activity");
 
   // Check if current route is public document viewer: /d/{share_token}
@@ -20,6 +23,15 @@ export const App: React.FC = () => {
     const shareToken = path.replace("/d/", "").split("/")[0];
     return <DocumentViewer shareToken={shareToken} />;
   }
+
+  if (!isAuthed) {
+    return <LoginPage onLoginSuccess={() => setIsAuthed(true)} />;
+  }
+
+  const handleLogout = () => {
+    logout();
+    setIsAuthed(false);
+  };
 
   const renderActivePage = () => {
     switch (activeTab) {
@@ -48,7 +60,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-[#f8fafd]">
-      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
       <main className="flex-1 ml-64 p-8 max-w-6xl">
         {renderActivePage()}
       </main>

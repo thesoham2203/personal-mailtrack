@@ -10,14 +10,16 @@ import {
   BarChart3,
   Stethoscope,
   ExternalLink,
+  LogOut,
 } from "lucide-react";
 
 interface NavProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onLogout?: () => void;
 }
 
-export const Navigation: React.FC<NavProps> = ({ activeTab, setActiveTab }) => {
+export const Navigation: React.FC<NavProps> = ({ activeTab, setActiveTab, onLogout }) => {
   const navItems = [
     { id: "activity", label: "Live Activity", icon: Activity },
     { id: "emails", label: "Tracked Emails", icon: Mail },
@@ -67,8 +69,8 @@ export const Navigation: React.FC<NavProps> = ({ activeTab, setActiveTab }) => {
         </nav>
       </div>
 
-      {/* Gmail Launch Footer */}
-      <div className="p-4 border-t border-gray-100">
+      {/* Footer Actions */}
+      <div className="p-4 border-t border-gray-100 space-y-2">
         <a
           href="https://mail.google.com"
           target="_blank"
@@ -78,6 +80,16 @@ export const Navigation: React.FC<NavProps> = ({ activeTab, setActiveTab }) => {
           <span>Open Gmail in Brave</span>
           <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
         </a>
+
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition"
+          >
+            <span>Sign Out</span>
+            <LogOut className="w-3.5 h-3.5 text-red-400" />
+          </button>
+        )}
       </div>
     </aside>
   );
