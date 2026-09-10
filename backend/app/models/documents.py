@@ -6,7 +6,7 @@ from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, Str
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin, generate_uuid, utc_now
+from app.models.base import GUID, TimestampMixin, UUIDMixin, generate_uuid, utc_now
 
 
 class Document(Base, UUIDMixin, TimestampMixin):
@@ -14,7 +14,7 @@ class Document(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "documents"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -34,7 +34,7 @@ class DocumentShare(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "document_shares"
 
     document_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("documents.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("documents.id", ondelete="CASCADE"), index=True, nullable=False
     )
     share_token: Mapped[str] = mapped_column(
         String(64), default=generate_uuid, unique=True, index=True, nullable=False
@@ -58,7 +58,10 @@ class DocumentEvent(Base, UUIDMixin):
     __tablename__ = "document_events"
 
     document_share_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("document_shares.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID,
+        ForeignKey("document_shares.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
     )
     event_type: Mapped[str] = mapped_column(
         String(32), default="page_view", nullable=False

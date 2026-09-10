@@ -7,7 +7,7 @@ from sqlalchemy import JSON, DateTime, Float, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import UUIDMixin, utc_now
+from app.models.base import GUID, UUIDMixin, utc_now
 
 if TYPE_CHECKING:
     from app.models.tracked_emails import EmailRecipient
@@ -18,7 +18,7 @@ class OpenEvent(Base, UUIDMixin):
     __tablename__ = "open_events"
 
     recipient_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("email_recipients.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
@@ -54,13 +54,13 @@ class ClickEvent(Base, UUIDMixin):
     __tablename__ = "click_events"
 
     recipient_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("email_recipients.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
     )
     tracked_link_id: Mapped[str | None] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("tracked_links.id", ondelete="SET NULL"),
         index=True,
         nullable=True,
@@ -86,7 +86,7 @@ class ReplyEvent(Base, UUIDMixin):
     __tablename__ = "reply_events"
 
     recipient_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("email_recipients.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
@@ -106,7 +106,7 @@ class BounceEvent(Base, UUIDMixin):
     __tablename__ = "bounce_events"
 
     recipient_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("email_recipients.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
@@ -124,13 +124,13 @@ class ActivityEvent(Base, UUIDMixin):
     __tablename__ = "activity_events"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     event_type: Mapped[str] = mapped_column(String(64), index=True, nullable=False)
     # email.sent, email.opened, email.clicked, email.replied, email.bounced, document.viewed, campaign.completed
     source: Mapped[str] = mapped_column(String(64), default="tracking_engine", nullable=False)
     entity_type: Mapped[str] = mapped_column(String(64), nullable=False)  # email_recipient, document, campaign
-    entity_id: Mapped[str] = mapped_column(String(36), index=True, nullable=False)
+    entity_id: Mapped[str] = mapped_column(GUID, index=True, nullable=False)
     occurred_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now, index=True, nullable=False
     )
@@ -139,3 +139,4 @@ class ActivityEvent(Base, UUIDMixin):
     __table_args__ = (
         Index("ix_activity_events_user_occurred", "user_id", "occurred_at"),
     )
+

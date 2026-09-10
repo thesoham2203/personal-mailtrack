@@ -6,7 +6,7 @@ from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Tex
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin, utc_now
+from app.models.base import GUID, TimestampMixin, UUIDMixin, utc_now
 
 
 class AutomationRule(Base, UUIDMixin, TimestampMixin):
@@ -14,7 +14,7 @@ class AutomationRule(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "automation_rules"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
@@ -28,9 +28,9 @@ class AutomationRun(Base, UUIDMixin):
     __tablename__ = "automation_runs"
 
     rule_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("automation_rules.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("automation_rules.id", ondelete="CASCADE"), index=True, nullable=False
     )
-    activity_event_id: Mapped[str] = mapped_column(String(36), index=True, nullable=False)
+    activity_event_id: Mapped[str] = mapped_column(GUID, index=True, nullable=False)
     executed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now, nullable=False
     )
@@ -43,7 +43,7 @@ class WebhookEndpoint(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "webhook_endpoints"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     url: Mapped[str] = mapped_column(Text, nullable=False)
     secret: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -58,9 +58,9 @@ class WebhookDelivery(Base, UUIDMixin):
     __tablename__ = "webhook_deliveries"
 
     webhook_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("webhook_endpoints.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("webhook_endpoints.id", ondelete="CASCADE"), index=True, nullable=False
     )
-    event_id: Mapped[str] = mapped_column(String(36), index=True, nullable=False)
+    event_id: Mapped[str] = mapped_column(GUID, index=True, nullable=False)
     attempt_number: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     status_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
     delivered_at: Mapped[datetime] = mapped_column(

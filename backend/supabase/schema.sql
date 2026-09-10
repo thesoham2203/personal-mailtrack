@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS email_recipients (
     last_open_at TIMESTAMPTZ,
     first_click_at TIMESTAMPTZ,
     last_click_at TIMESTAMPTZ,
+    raw_open_count INTEGER DEFAULT 0 NOT NULL,
     human_open_count INTEGER DEFAULT 0 NOT NULL,
     human_click_count INTEGER DEFAULT 0 NOT NULL,
     reply_received_at TIMESTAMPTZ,

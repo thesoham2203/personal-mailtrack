@@ -6,7 +6,7 @@ from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin
+from app.models.base import GUID, TimestampMixin, UUIDMixin
 
 
 class Contact(Base, UUIDMixin, TimestampMixin):
@@ -14,7 +14,7 @@ class Contact(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "contacts"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     email: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
     name: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -43,7 +43,7 @@ class ContactList(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "contact_lists"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -58,10 +58,10 @@ class ContactListMember(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "contact_list_members"
 
     contact_list_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("contact_lists.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("contact_lists.id", ondelete="CASCADE"), index=True, nullable=False
     )
     contact_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("contacts.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("contacts.id", ondelete="CASCADE"), index=True, nullable=False
     )
 
     contact_list: Mapped["ContactList"] = relationship("ContactList", back_populates="members")
@@ -73,6 +73,7 @@ class ContactNote(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "contact_notes"
 
     contact_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("contacts.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("contacts.id", ondelete="CASCADE"), index=True, nullable=False
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
+

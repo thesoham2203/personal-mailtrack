@@ -4,7 +4,7 @@ from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin
+from app.models.base import GUID, TimestampMixin, UUIDMixin
 
 
 class UserSettings(Base, UUIDMixin, TimestampMixin):
@@ -12,7 +12,7 @@ class UserSettings(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "user_settings"
 
     user_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("profiles.id", ondelete="CASCADE"),
         unique=True,
         index=True,

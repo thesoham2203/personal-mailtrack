@@ -7,7 +7,7 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin
+from app.models.base import GUID, TimestampMixin, UUIDMixin
 
 
 class Profile(Base, UUIDMixin, TimestampMixin):
@@ -28,7 +28,7 @@ class GmailAccount(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "gmail_accounts"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     google_account_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
     email: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
@@ -47,7 +47,7 @@ class OAuthCredential(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "oauth_credentials"
 
     gmail_account_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("gmail_accounts.id", ondelete="CASCADE"),
         unique=True,
         index=True,

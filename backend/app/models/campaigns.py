@@ -6,7 +6,7 @@ from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin
+from app.models.base import GUID, TimestampMixin, UUIDMixin
 
 
 class Campaign(Base, UUIDMixin, TimestampMixin):
@@ -14,10 +14,10 @@ class Campaign(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "campaigns"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     gmail_account_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("gmail_accounts.id", ondelete="SET NULL"), index=True, nullable=True
+        GUID, ForeignKey("gmail_accounts.id", ondelete="SET NULL"), index=True, nullable=True
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     subject: Mapped[str] = mapped_column(String(512), nullable=False)
@@ -41,10 +41,10 @@ class CampaignRecipient(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "campaign_recipients"
 
     campaign_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("campaigns.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("campaigns.id", ondelete="CASCADE"), index=True, nullable=False
     )
     contact_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("contacts.id", ondelete="SET NULL"), index=True, nullable=True
+        GUID, ForeignKey("contacts.id", ondelete="SET NULL"), index=True, nullable=True
     )
     email: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
     personalized_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
@@ -52,7 +52,7 @@ class CampaignRecipient(Base, UUIDMixin, TimestampMixin):
         String(32), default="pending", index=True, nullable=False
     )  # pending, sent, failed, bounced, unsubscribed
     tracked_email_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("tracked_emails.id", ondelete="SET NULL"), index=True, nullable=True
+        GUID, ForeignKey("tracked_emails.id", ondelete="SET NULL"), index=True, nullable=True
     )
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)

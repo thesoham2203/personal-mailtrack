@@ -6,7 +6,7 @@ from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Tex
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin, utc_now
+from app.models.base import GUID, TimestampMixin, UUIDMixin, utc_now
 
 
 class NotificationRule(Base, UUIDMixin, TimestampMixin):
@@ -14,7 +14,7 @@ class NotificationRule(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "notification_rules"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     rule_type: Mapped[str] = mapped_column(
         String(64), nullable=False
@@ -32,10 +32,10 @@ class NotificationEvent(Base, UUIDMixin):
     __tablename__ = "notification_events"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     rule_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("notification_rules.id", ondelete="SET NULL"), nullable=True
+        GUID, ForeignKey("notification_rules.id", ondelete="SET NULL"), nullable=True
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)

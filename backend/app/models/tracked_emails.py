@@ -7,7 +7,7 @@ from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin, generate_uuid, utc_now
+from app.models.base import GUID, TimestampMixin, UUIDMixin, generate_uuid, utc_now
 
 if TYPE_CHECKING:
     from app.models.events import ClickEvent, OpenEvent
@@ -18,20 +18,20 @@ class TrackedEmail(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "tracked_emails"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     gmail_account_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("gmail_accounts.id", ondelete="SET NULL"), index=True, nullable=True
+        GUID, ForeignKey("gmail_accounts.id", ondelete="SET NULL"), index=True, nullable=True
     )
     public_id: Mapped[str] = mapped_column(
-        String(36), default=generate_uuid, unique=True, index=True, nullable=False
+        GUID, default=generate_uuid, unique=True, index=True, nullable=False
     )
     gmail_message_id: Mapped[str | None] = mapped_column(String(128), index=True, nullable=True)
     gmail_thread_id: Mapped[str | None] = mapped_column(String(128), index=True, nullable=True)
     rfc_message_id: Mapped[str | None] = mapped_column(String(255), index=True, nullable=True)
     subject: Mapped[str | None] = mapped_column(String(512), nullable=True)
     snippet: Mapped[str | None] = mapped_column(Text, nullable=True)
-    campaign_id: Mapped[str | None] = mapped_column(String(36), index=True, nullable=True)
+    campaign_id: Mapped[str | None] = mapped_column(GUID, index=True, nullable=True)
     sent_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now, index=True, nullable=False
     )
@@ -53,17 +53,17 @@ class EmailRecipient(Base, UUIDMixin):
     __tablename__ = "email_recipients"
 
     tracked_email_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("tracked_emails.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
     )
-    contact_id: Mapped[str | None] = mapped_column(String(36), index=True, nullable=True)
+    contact_id: Mapped[str | None] = mapped_column(GUID, index=True, nullable=True)
     email: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
     name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     recipient_type: Mapped[str] = mapped_column(String(16), default="to", nullable=False)  # to, cc, bcc
     tracking_token_id: Mapped[str] = mapped_column(
-        String(36), default=generate_uuid, unique=True, index=True, nullable=False
+        GUID, default=generate_uuid, unique=True, index=True, nullable=False
     )
     first_open_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_open_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -96,7 +96,7 @@ class TrackedLink(Base, UUIDMixin):
     __tablename__ = "tracked_links"
 
     tracked_email_id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         ForeignKey("tracked_emails.id", ondelete="CASCADE"),
         index=True,
         nullable=False,

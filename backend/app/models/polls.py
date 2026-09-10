@@ -6,7 +6,7 @@ from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models.base import TimestampMixin, UUIDMixin, utc_now
+from app.models.base import GUID, TimestampMixin, UUIDMixin, utc_now
 
 
 class Poll(Base, UUIDMixin, TimestampMixin):
@@ -14,7 +14,7 @@ class Poll(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "polls"
 
     user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("profiles.id", ondelete="CASCADE"), index=True, nullable=False
     )
     question: Mapped[str] = mapped_column(String(512), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
@@ -32,7 +32,7 @@ class PollOption(Base, UUIDMixin):
     __tablename__ = "poll_options"
 
     poll_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("polls.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("polls.id", ondelete="CASCADE"), index=True, nullable=False
     )
     option_text: Mapped[str] = mapped_column(String(255), nullable=False)
     position: Mapped[int] = mapped_column(default=0, nullable=False)
@@ -45,10 +45,10 @@ class PollResponse(Base, UUIDMixin):
     __tablename__ = "poll_responses"
 
     poll_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("polls.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("polls.id", ondelete="CASCADE"), index=True, nullable=False
     )
     option_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("poll_options.id", ondelete="CASCADE"), index=True, nullable=False
+        GUID, ForeignKey("poll_options.id", ondelete="CASCADE"), index=True, nullable=False
     )
     recipient_email: Mapped[str | None] = mapped_column(String(255), nullable=True)
     responded_at: Mapped[datetime] = mapped_column(

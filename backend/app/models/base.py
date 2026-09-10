@@ -3,8 +3,10 @@
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DateTime, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
+
+GUID = Uuid(as_uuid=False)
 
 
 def utc_now() -> datetime:
@@ -33,8 +35,9 @@ class TimestampMixin:
 class UUIDMixin:
     """Primary key UUID mixin compatible with SQLite and Postgres."""
     id: Mapped[str] = mapped_column(
-        String(36),
+        GUID,
         primary_key=True,
         default=generate_uuid,
         nullable=False,
     )
+
