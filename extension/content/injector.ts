@@ -84,6 +84,8 @@ export async function handleInterceptedSend(
   if (activeSends.has(composeEl)) {
     return;
   }
+  // Lock immediately to prevent rapid double-click race conditions
+  activeSends.add(composeEl);
 
   const settings = await getSettings();
 

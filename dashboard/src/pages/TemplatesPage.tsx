@@ -42,10 +42,10 @@ export const TemplatesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Email Templates</h2>
-          <p className="text-xs text-gray-500">Create reusable snippets and full emails with dynamic merge tags.</p>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Email Templates</h2>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Create reusable snippets and full emails with dynamic merge tags.</p>
         </div>
 
         <button
@@ -58,16 +58,16 @@ export const TemplatesPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {loading ? (
-          <div className="col-span-2 p-8 text-center text-sm text-gray-400">Loading templates...</div>
+          <div className="col-span-2 p-8 text-center text-sm text-gray-400 dark:text-slate-500">Loading templates...</div>
         ) : templates.length === 0 ? (
-          <div className="col-span-2 p-8 text-center text-sm text-gray-400">No templates yet. Create your first template!</div>
+          <div className="col-span-2 p-8 text-center text-sm text-gray-400 dark:text-slate-500">No templates yet. Create your first template!</div>
         ) : (
           templates.map((t) => (
-            <div key={t.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3">
+            <div key={t.id} className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
-                  <Bookmark className="w-4 h-4 text-blue-600" />
-                  <h3 className="text-sm font-semibold text-gray-900">{t.title}</h3>
+                  <Bookmark className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t.title}</h3>
                 </div>
                 <button
                   onClick={() => {
@@ -75,16 +75,16 @@ export const TemplatesPage: React.FC = () => {
                     setCopiedId(t.id);
                     setTimeout(() => setCopiedId(null), 2000);
                   }}
-                  className="text-xs text-gray-400 hover:text-blue-600 flex items-center gap-1"
+                  className="text-xs text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 transition"
                 >
-                  {copiedId === t.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedId === t.id ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   {copiedId === t.id ? "Copied" : "Copy"}
                 </button>
               </div>
 
-              <div className="text-xs text-gray-600 font-medium">Subject: {t.subject}</div>
+              <div className="text-xs text-gray-600 dark:text-slate-300 font-medium">Subject: {t.subject}</div>
               <div
-                className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg border border-gray-100 font-mono line-clamp-3"
+                className="text-xs text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-800/80 p-3 rounded-lg border border-gray-100 dark:border-slate-700/60 font-mono line-clamp-3"
                 dangerouslySetInnerHTML={{ __html: t.body_html }}
               />
             </div>
@@ -93,43 +93,43 @@ export const TemplatesPage: React.FC = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full border border-gray-200 shadow-xl p-6">
-            <h3 className="text-base font-bold text-gray-900 mb-4">Create Template</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full border border-gray-200 dark:border-slate-800 shadow-2xl p-6 transition-colors">
+            <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">Create Template</h3>
             <form onSubmit={handleCreate} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Title</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">Title</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Follow-up after meeting"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 placeholder:text-gray-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Subject</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">Subject</label>
                 <input
                   type="text"
                   required
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="e.g. Great speaking with you, {{first_name}}"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500 font-mono"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Body HTML</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">Body HTML</label>
                 <textarea
                   rows={4}
                   required
                   value={bodyHtml}
                   onChange={(e) => setBodyHtml(e.target.value)}
                   placeholder="<p>Hi {{first_name}},</p><p>Thanks for your time today...</p>"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500 font-mono"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-mono"
                 />
               </div>
 
@@ -137,13 +137,13 @@ export const TemplatesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition"
                 >
                   Save Template
                 </button>

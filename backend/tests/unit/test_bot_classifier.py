@@ -120,3 +120,30 @@ def test_interactive_browser_classified_as_human():
     )
     assert cls == "human_likely"
     assert conf >= 0.80
+
+
+def test_click_classified_as_human_for_standard_browser():
+    cls, conf, _reason = EventClassifier.classify_click(
+        user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0",
+        ip_address="98.12.34.56",
+    )
+    assert cls == "human_likely"
+    assert conf >= 0.90
+
+
+def test_click_classified_as_scanner_for_safelinks():
+    cls, conf, reason = EventClassifier.classify_click(
+        user_agent="Mozilla/5.0 (compatible; SafeLinks/1.0)",
+        ip_address="40.92.1.2",
+    )
+    assert cls == "security_scanner_likely"
+    assert "SafeLinks" in reason or "scanner" in reason
+
+
+def test_click_classified_as_automation_for_headless_crawler():
+    cls, conf, _reason = EventClassifier.classify_click(
+        user_agent="HeadlessChrome/120.0.0.0",
+        ip_address="198.51.100.4",
+    )
+    assert cls == "automation_likely"
+

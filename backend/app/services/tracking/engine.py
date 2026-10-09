@@ -180,6 +180,12 @@ class TrackingEngine:
         link_res = await session.execute(link_stmt)
         matched_link = link_res.scalars().first()
 
+        # Classify click request (detect automated link inspection crawlers and SafeLinks)
+        classification, confidence, reason = EventClassifier.classify_click(
+            user_agent=user_agent,
+            ip_address=ip_address,
+        )
+
         # Record click event
         click_event = ClickEvent(
             recipient_id=recipient.id,
@@ -188,8 +194,8 @@ class TrackingEngine:
             occurred_at=occurred_at,
             ip_address=ip_address,
             user_agent=user_agent,
-            classification="human_likely",
-            confidence=1.0,
+            classification=classification,
+            confidence=confidence,
         )
         session.add(click_event)
 
@@ -197,7 +203,8 @@ class TrackingEngine:
         if not recipient.first_click_at:
             recipient.first_click_at = occurred_at
         recipient.last_click_at = occurred_at
-        recipient.human_click_count += 1
+        if classification == "human_likely":
+            recipient.human_click_count += 1
 
         # Project to universal activity timeline
         await activity_bus.record_activity(
@@ -211,6 +218,12 @@ class TrackingEngine:
                 "subject": email.subject,
                 "recipient_email": recipient.email,
                 "destination_url": clean_url,
+                "classification": classification,
+                "confidence": confidence,
+                "reason": reason,
+                "is_bot": classification in ("security_scanner_likely", "automation_likely"),
+                "is_proxy": classification == "proxy_likely",
+                "is_human": classification == "human_likely",
             },
             occurred_at=occurred_at,
         )

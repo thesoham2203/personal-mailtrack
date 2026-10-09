@@ -60,16 +60,16 @@ export const CampaignsPage: React.FC = () => {
       await sendCampaign(id);
       loadCampaigns();
     } catch (err) {
-      alert("Failed to send campaign.");
+      alert("Failed to dispatch campaign.");
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Mail-Merge Campaigns</h2>
-          <p className="text-xs text-gray-500">Send personalized, individualized tracked campaigns with zero spam risk.</p>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Mail-Merge Campaigns</h2>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Send personalized, individualized tracked campaigns with zero spam risk.</p>
         </div>
 
         <button
@@ -81,30 +81,30 @@ export const CampaignsPage: React.FC = () => {
       </div>
 
       {/* Campaigns List */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden divide-y divide-gray-100 dark:divide-slate-800/80 transition-colors">
         {loading ? (
-          <div className="p-8 text-center text-sm text-gray-400">Loading campaigns...</div>
+          <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">Loading campaigns...</div>
         ) : campaigns.length === 0 ? (
-          <div className="p-8 text-center text-sm text-gray-400">No campaigns created yet. Click above to create one!</div>
+          <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">No campaigns created yet. Click above to create one!</div>
         ) : (
           campaigns.map((c) => (
-            <div key={c.id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition">
+            <div key={c.id} className="p-5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-800/50 transition">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-gray-900">{c.name}</h3>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{c.name}</h3>
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                       c.status === "completed"
-                        ? "bg-emerald-100 text-emerald-800"
+                        ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
                         : c.status === "sending"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                        : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700"
                     }`}
                   >
                     {c.status}
                   </span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                   Subject: <i>"{c.subject}"</i> · {c.total_recipients} recipients
                 </div>
               </div>
@@ -119,7 +119,7 @@ export const CampaignsPage: React.FC = () => {
                   </button>
                 )}
                 {c.status === "completed" && (
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-medium">
                     <CheckCircle className="w-4 h-4" /> Sent
                   </div>
                 )}
@@ -131,52 +131,52 @@ export const CampaignsPage: React.FC = () => {
 
       {/* New Campaign Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full border border-gray-200 shadow-2xl p-6">
-            <h3 className="text-base font-bold text-gray-900 mb-4">Create Mail-Merge Campaign</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full border border-gray-200 dark:border-slate-800 shadow-2xl p-6 transition-colors">
+            <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">Create Mail-Merge Campaign</h3>
             <form onSubmit={handleCreate} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Campaign Name</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">Campaign Name</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Q4 Client Update"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 placeholder:text-gray-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Subject (Supports Variables)</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">Subject (Supports Variables)</label>
                 <input
                   type="text"
                   required
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500 font-mono"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">HTML Body</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">HTML Body</label>
                 <textarea
                   rows={4}
                   required
                   value={bodyHtml}
                   onChange={(e) => setBodyHtml(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500 font-mono"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Recipients (Format: email, first_name)</label>
+                <label className="block font-semibold text-gray-700 dark:text-slate-300 mb-1">Recipients (Format: email, first_name)</label>
                 <textarea
                   rows={3}
                   required
                   value={recipientsText}
                   onChange={(e) => setRecipientsText(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-blue-500 font-mono"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white rounded-lg text-xs focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-mono"
                 />
               </div>
 
@@ -184,13 +184,13 @@ export const CampaignsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs font-semibold"
+                  className="px-4 py-2 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition"
                 >
                   Save Campaign
                 </button>

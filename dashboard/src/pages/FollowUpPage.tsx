@@ -25,9 +25,8 @@ export const FollowUpPage: React.FC = () => {
     return hoursElapsed >= 48; // 48h default threshold
   });
   const revivedEmails = emails.filter((e) => {
-    // If open count > 1 and sent > 7 days ago
     const sentTime = new Date(e.sent_at).getTime();
-    return e.open_count > 1 && now - sentTime > 7 * 24 * 60 * 60 * 1000;
+    return (e.human_open_count ?? e.open_count) > 0 && now - sentTime > 7 * 24 * 60 * 60 * 1000;
   });
 
   const getListForTab = () => {
@@ -50,12 +49,12 @@ export const FollowUpPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-bold text-gray-900">Follow-Up Command Center</h2>
-        <p className="text-xs text-gray-500">Track who needs a reminder, hot leads, and conversations awaiting action.</p>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white">Follow-Up Command Center</h2>
+        <p className="text-xs text-gray-500 dark:text-slate-400">Track who needs a reminder, hot leads, and conversations awaiting action.</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
+      <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-slate-800 pb-3">
         {[
           { id: "waiting_on_them", label: "Waiting on Them", icon: Clock, count: waitingOnThem.length },
           { id: "hot", label: "Hot Conversations", icon: Flame, count: hotEmails.length },
@@ -71,12 +70,12 @@ export const FollowUpPage: React.FC = () => {
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition ${
                 isActive
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                  : "bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"}`}>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${isActive ? "bg-white/20 text-white" : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-400"}`}>
                 {tab.count}
               </span>
             </button>
@@ -85,11 +84,11 @@ export const FollowUpPage: React.FC = () => {
       </div>
 
       {/* List */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden divide-y divide-gray-100 dark:divide-slate-800/80 transition-colors">
         {loading ? (
-          <div className="p-8 text-center text-sm text-gray-400">Loading follow-ups...</div>
+          <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">Loading follow-ups...</div>
         ) : list.length === 0 ? (
-          <div className="p-8 text-center text-sm text-gray-400">
+          <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">
             No emails in this queue! You're all caught up.
           </div>
         ) : (
@@ -102,24 +101,24 @@ export const FollowUpPage: React.FC = () => {
             });
 
             return (
-              <div key={em.id} className="p-4 hover:bg-gray-50 flex items-center justify-between transition">
+              <div key={em.id} className="p-4 hover:bg-gray-50 dark:hover:bg-slate-800/50 flex items-center justify-between transition">
                 <div>
-                  <div className="text-sm font-semibold text-gray-900">{em.subject || "(No Subject)"}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">{em.subject || "(No Subject)"}</div>
+                  <div className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
                     To: {em.recipients.map((r: any) => r.email).join(", ")} · Sent {dateStr}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="text-xs text-right">
-                    <span className="font-semibold text-emerald-600">{em.open_count} opens</span>
-                    <span className="text-gray-400 block text-[11px]">{em.click_count} clicks</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">{em.human_open_count ?? em.open_count} opens</span>
+                    <span className="text-gray-400 dark:text-slate-500 block text-[11px]">{em.click_count} clicks</span>
                   </div>
                   <a
                     href="https://mail.google.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 py-1.5 bg-gray-100 hover:bg-blue-50 hover:text-blue-600 rounded-lg text-xs font-medium text-gray-700 transition"
+                    className="px-3 py-1.5 bg-gray-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg text-xs font-medium text-gray-700 dark:text-slate-300 transition"
                   >
                     Reply in Gmail
                   </a>

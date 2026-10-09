@@ -58,49 +58,49 @@ export const ActivityPage: React.FC = () => {
     <div className="space-y-6">
       {/* Top Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Emails Sent</span>
-          <div className="mt-2 text-2xl font-bold text-gray-900">{summary?.total_sent || 0}</div>
-          <span className="text-xs text-gray-400 mt-1 block">Last 30 days</span>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm transition-colors">
+          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Emails Sent</span>
+          <div className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{summary?.total_sent || 0}</div>
+          <span className="text-xs text-gray-400 dark:text-slate-500 mt-1 block">Last 30 days</span>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Verified Human Opens</span>
-          <div className="mt-2 text-2xl font-bold text-emerald-600">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm transition-colors">
+          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Verified Human Opens</span>
+          <div className="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
             {summary?.total_human_opens || 0}
-            <span className="text-xs font-normal text-gray-400 ml-2">({summary?.open_rate_percent || 0}%)</span>
+            <span className="text-xs font-normal text-gray-400 dark:text-slate-400 ml-2">({summary?.open_rate_percent || 0}%)</span>
           </div>
-          <span className="text-xs text-gray-400 mt-1 block">Total raw opens: {summary?.total_raw_opens || 0}</span>
+          <span className="text-xs text-gray-400 dark:text-slate-500 mt-1 block">Total raw opens: {summary?.total_raw_opens || 0}</span>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Link Clicks</span>
-          <div className="mt-2 text-2xl font-bold text-blue-600">{summary?.total_clicks || 0}</div>
-          <span className="text-xs text-gray-400 mt-1 block">CTR: {summary?.click_rate_percent || 0}%</span>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm transition-colors">
+          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Link Clicks</span>
+          <div className="mt-2 text-2xl font-bold text-blue-600 dark:text-blue-400">{summary?.total_clicks || 0}</div>
+          <span className="text-xs text-gray-400 dark:text-slate-500 mt-1 block">CTR: {summary?.click_rate_percent || 0}%</span>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Replies Received</span>
-          <div className="mt-2 text-2xl font-bold text-purple-600">{summary?.total_replies || 0}</div>
-          <span className="text-xs text-gray-400 mt-1 block">Reply rate: {summary?.reply_rate_percent || 0}%</span>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm transition-colors">
+          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Replies Received</span>
+          <div className="mt-2 text-2xl font-bold text-purple-600 dark:text-purple-400">{summary?.total_replies || 0}</div>
+          <span className="text-xs text-gray-400 dark:text-slate-500 mt-1 block">Reply rate: {summary?.reply_rate_percent || 0}%</span>
         </div>
       </div>
 
       {/* Accuracy & Tracking Transparency Banner */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3 text-xs text-slate-600">
-        <Info className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
+      <div className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 flex items-start gap-3 text-xs text-slate-600 dark:text-slate-300 transition-colors">
+        <Info className="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0 mt-0.5" />
         <div>
-          <span className="font-semibold text-slate-700">Engagement & Telemetry Notice:</span>{" "}
+          <span className="font-semibold text-slate-700 dark:text-slate-200">Engagement & Telemetry Notice:</span>{" "}
           Pixel opens prove resource retrieval rather than comprehension. Inbound security scanners and mail proxies (such as Google Image Proxy) are classified separately from likely human opens to prevent engagement metric distortion.
         </div>
       </div>
 
       {/* Activity Timeline Table */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-gray-200 flex flex-wrap justify-between items-center gap-3">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+        <div className="p-4 border-b border-gray-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-3">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Live Activity Feed</h2>
-            <p className="text-xs text-gray-500">Chronological timeline of all tracked opens, clicks, and views.</p>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Live Activity Feed</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Chronological timeline of all tracked opens, clicks, and views.</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -118,8 +118,8 @@ export const ActivityPage: React.FC = () => {
                 onClick={() => setFilter(tab.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                   filter === tab.id
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white font-semibold"
+                    : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700"
                 }`}
               >
                 {tab.label}
@@ -128,11 +128,11 @@ export const ActivityPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-slate-800/80">
           {loading ? (
-            <div className="p-8 text-center text-sm text-gray-400">Loading timeline...</div>
+            <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">Loading timeline...</div>
           ) : filteredActivities.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-400">
+            <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">
               No matching activity recorded yet. Send a tracked email to get started!
             </div>
           ) : (
@@ -140,7 +140,7 @@ export const ActivityPage: React.FC = () => {
               const date = new Date(act.occurred_at).toLocaleString();
               const meta = act.metadata || {};
 
-              let icon = <Eye className="w-4 h-4 text-emerald-600" />;
+              let icon = <Eye className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
               let title = `Email opened: "${meta.subject || "No Subject"}"`;
               let sub = meta.recipient_email || "Recipient";
               let badge: React.ReactNode = null;
@@ -148,50 +148,50 @@ export const ActivityPage: React.FC = () => {
               if (act.event_type === "email.opened") {
                 const cls = meta.classification;
                 if (cls === "human_likely") {
-                  icon = <Eye className="w-4 h-4 text-emerald-600" />;
+                  icon = <Eye className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
                   title = `Email opened: "${meta.subject || "No Subject"}"`;
                   badge = (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                       <CheckCircle2 className="w-3 h-3" />
                       Likely Human
                     </span>
                   );
                 } else if (cls === "proxy_likely") {
-                  icon = <Layers className="w-4 h-4 text-blue-600" />;
+                  icon = <Layers className="w-4 h-4 text-blue-600 dark:text-blue-400" />;
                   title = `Proxy prefetch: "${meta.subject || "No Subject"}"`;
                   sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Image proxy prefetch"}`;
                   badge = (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                       <Shield className="w-3 h-3" />
                       Proxy / Prefetch
                     </span>
                   );
                 } else if (cls === "security_scanner_likely") {
-                  icon = <ShieldAlert className="w-4 h-4 text-amber-600" />;
+                  icon = <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
                   title = `Security scanner inspection: "${meta.subject || "No Subject"}"`;
                   sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Inbound security scan"}`;
                   badge = (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-300">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
                       <ShieldAlert className="w-3 h-3" />
                       Security Scanner
                     </span>
                   );
                 } else if (cls === "automation_likely") {
-                  icon = <Bot className="w-4 h-4 text-orange-600" />;
+                  icon = <Bot className="w-4 h-4 text-orange-600 dark:text-orange-400" />;
                   title = `Automated bot request: "${meta.subject || "No Subject"}"`;
                   sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Automated client"}`;
                   badge = (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
                       <Bot className="w-3 h-3" />
                       Automated Bot
                     </span>
                   );
                 } else {
-                  icon = <HelpCircle className="w-4 h-4 text-gray-500" />;
+                  icon = <HelpCircle className="w-4 h-4 text-gray-500 dark:text-slate-400" />;
                   title = `Unverified open request: "${meta.subject || "No Subject"}"`;
                   sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Unverified client pattern"}`;
                   badge = (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700">
                       <HelpCircle className="w-3 h-3" />
                       Unverified
                     </span>
@@ -202,35 +202,35 @@ export const ActivityPage: React.FC = () => {
                   sub += ` · Shared pixel (${meta.recipient_count || 2} recipients)`;
                 }
               } else if (act.event_type === "email.clicked") {
-                icon = <MousePointer className="w-4 h-4 text-blue-600" />;
+                icon = <MousePointer className="w-4 h-4 text-blue-600 dark:text-blue-400" />;
                 title = `Link clicked in "${meta.subject || "Email"}"`;
                 sub = `Destination: ${meta.destination_url || "Link"}`;
               } else if (act.event_type === "email.replied") {
-                icon = <CornerUpLeft className="w-4 h-4 text-purple-600" />;
+                icon = <CornerUpLeft className="w-4 h-4 text-purple-600 dark:text-purple-400" />;
                 title = `Reply received for "${meta.subject || "Email"}"`;
               } else if (act.event_type === "document.viewed") {
-                icon = <FileText className="w-4 h-4 text-amber-600" />;
+                icon = <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
                 title = `Document viewed: "${meta.title || "PDF Document"}"`;
               } else if (act.event_type === "email.sent") {
-                icon = <CheckCircle2 className="w-4 h-4 text-gray-400" />;
+                icon = <CheckCircle2 className="w-4 h-4 text-gray-400 dark:text-slate-500" />;
                 title = `Tracked email sent: "${meta.subject || "No Subject"}"`;
               }
 
               return (
-                <div key={act.id} className="p-4 hover:bg-gray-50 flex items-center justify-between transition">
+                <div key={act.id} className="p-4 hover:bg-gray-50 dark:hover:bg-slate-800/50 flex items-center justify-between transition">
                   <div className="flex items-center gap-3.5">
-                    <div className="p-2 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center">
+                    <div className="p-2 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700/60 flex items-center justify-center">
                       {icon}
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
                         {title}
                         {badge}
                       </div>
-                      <div className="text-xs text-gray-500 mt-0.5">{sub}</div>
+                      <div className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{sub}</div>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400 font-mono">{date}</div>
+                  <div className="text-xs text-gray-400 dark:text-slate-500 font-mono">{date}</div>
                 </div>
               );
             })

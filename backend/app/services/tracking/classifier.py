@@ -181,3 +181,31 @@ class EventClassifier:
             return "human_likely", 0.85, "Standard interactive browser user-agent"
 
         return "unknown", 0.50, "Unclassified user-agent pattern"
+
+    @staticmethod
+    def classify_click(
+        user_agent: str | None,
+        ip_address: str | None,
+    ) -> tuple[str, float, str]:
+        """
+        Classifies link click requests.
+        Unlike image pixel opens (which are routinely loaded by proxies),
+        link clicks represent intentional navigation unless originating from
+        known automated URL scanners or security gateways.
+        """
+        ua_lower = (user_agent or "").lower().strip()
+
+        # 1. Explicit security scanner or safe-link inspection crawler
+        for sig in SECURITY_SCANNER_SIGNATURES:
+            if sig in ua_lower:
+                return "security_scanner_likely", 0.95, f"Automated link scanner signature: {sig}"
+
+        if _match_network(ip_address, MICROSOFT_SCANNER_NETWORKS):
+            return "security_scanner_likely", 0.85, f"Microsoft SafeLinks scanner subnet ({ip_address})"
+
+        # 2. Explicit automated crawler/spider
+        for sig in ["spider", "crawler", "headless", "phantomjs", "puppeteer", "playwright", "selenium"]:
+            if sig in ua_lower:
+                return "automation_likely", 0.90, f"Automated crawler signature: {sig}"
+
+        return "human_likely", 0.95, "Interactive link click navigation"

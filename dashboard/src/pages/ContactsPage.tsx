@@ -34,44 +34,44 @@ export const ContactsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Personal Contact CRM</h2>
-          <p className="text-xs text-gray-500">Heuristic engagement scores and interaction history for your contacts.</p>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Personal Contact CRM</h2>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Heuristic engagement scores and interaction history for your contacts.</p>
         </div>
 
         <div className="relative w-64">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-gray-400 dark:text-slate-500 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Search contacts..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 placeholder:text-gray-400 dark:placeholder:text-slate-500 transition-colors"
           />
         </div>
       </div>
 
       {/* Contacts Table */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden divide-y divide-gray-100">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden divide-y divide-gray-100 dark:divide-slate-800/80 transition-colors">
         {loading ? (
-          <div className="p-8 text-center text-sm text-gray-400">Loading contacts...</div>
+          <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">Loading contacts...</div>
         ) : contacts.length === 0 ? (
-          <div className="p-8 text-center text-sm text-gray-400">No contacts found.</div>
+          <div className="p-8 text-center text-sm text-gray-400 dark:text-slate-500">No contacts found.</div>
         ) : (
           contacts.map((c) => (
             <div
               key={c.id}
               onClick={() => openContact(c.id)}
-              className="p-4 hover:bg-gray-50 flex items-center justify-between cursor-pointer transition"
+              className="p-4 hover:bg-gray-50 dark:hover:bg-slate-800/50 flex items-center justify-between cursor-pointer transition"
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-xs border border-blue-200 dark:border-blue-800">
                   {c.name ? c.name[0].toUpperCase() : c.email[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-900">{c.name || c.email}</div>
-                  <div className="text-xs text-gray-500">{c.email} {c.company ? `· ${c.company}` : ""}</div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">{c.name || c.email}</div>
+                  <div className="text-xs text-gray-500 dark:text-slate-400">{c.email} {c.company ? `· ${c.company}` : ""}</div>
                 </div>
               </div>
 
@@ -79,10 +79,10 @@ export const ContactsPage: React.FC = () => {
                 <span
                   className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                     c.status === "Hot"
-                      ? "bg-amber-100 text-amber-800"
+                      ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
                       : c.status === "Warm"
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-gray-100 text-gray-600"
+                      ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                      : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700"
                   }`}
                 >
                   {c.status} ({c.engagement_score} pts)
@@ -95,44 +95,44 @@ export const ContactsPage: React.FC = () => {
 
       {/* Contact Timeline Drawer */}
       {selectedContact && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-end">
-          <div className="bg-white w-full max-w-md h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto border-l border-gray-200 dark:border-slate-800 transition-colors">
             <div className="space-y-6">
-              <div className="flex justify-between items-start border-b border-gray-100 pb-4">
+              <div className="flex justify-between items-start border-b border-gray-100 dark:border-slate-800 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-base">
+                  <div className="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
                     {selectedContact.name ? selectedContact.name[0].toUpperCase() : selectedContact.email[0].toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 text-base">{selectedContact.name || selectedContact.email}</h3>
-                    <p className="text-xs text-gray-500">{selectedContact.email}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-base">{selectedContact.name || selectedContact.email}</h3>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">{selectedContact.email}</p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedContact(null)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => setSelectedContact(null)} className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Engagement Status Card */}
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
+              <div className="bg-gray-50 dark:bg-slate-800/80 p-4 rounded-xl border border-gray-200 dark:border-slate-700/80 flex justify-between items-center text-xs">
                 <div>
-                  <span className="text-gray-400 block font-medium">Engagement Status</span>
-                  <span className="font-bold text-gray-900 text-sm">{selectedContact.status}</span>
+                  <span className="text-gray-400 dark:text-slate-400 block font-medium">Engagement Status</span>
+                  <span className="font-bold text-gray-900 dark:text-white text-sm">{selectedContact.status}</span>
                 </div>
                 <div>
-                  <span className="text-gray-400 block font-medium">Heuristic Score</span>
-                  <span className="font-bold text-blue-600 text-sm">{selectedContact.engagement_score} points</span>
+                  <span className="text-gray-400 dark:text-slate-400 block font-medium">Heuristic Score</span>
+                  <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">{selectedContact.engagement_score} points</span>
                 </div>
               </div>
 
               {/* Chronological Timeline */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-3">
                   Interaction History Timeline
                 </h4>
                 <div className="space-y-3">
                   {selectedContact.timeline.length === 0 ? (
-                    <div className="text-xs text-gray-400">No interaction events yet.</div>
+                    <div className="text-xs text-gray-400 dark:text-slate-500">No interaction events yet.</div>
                   ) : (
                     selectedContact.timeline.map((item: any) => {
                       const date = new Date(item.occurred_at).toLocaleString([], {
@@ -145,15 +145,15 @@ export const ContactsPage: React.FC = () => {
                       const isReply = item.event_type === "email.replied";
 
                       return (
-                        <div key={item.id} className="flex items-start gap-2.5 text-xs p-2.5 rounded-lg border border-gray-100 bg-white">
-                          <div className="p-1.5 rounded bg-gray-50 text-blue-600">
+                        <div key={item.id} className="flex items-start gap-2.5 text-xs p-2.5 rounded-lg border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 text-gray-900 dark:text-slate-200">
+                          <div className="p-1.5 rounded bg-gray-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400">
                             {isReply ? <CornerUpLeft className="w-3.5 h-3.5" /> : isClick ? <MousePointer className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-gray-900 dark:text-white">
                               {item.event_type === "email.opened" ? "Opened email" : isClick ? "Clicked tracked link" : "Replied to email"}
                             </div>
-                            <div className="text-gray-400 text-[11px]">{date}</div>
+                            <div className="text-gray-400 dark:text-slate-500 text-[11px]">{date}</div>
                           </div>
                         </div>
                       );
@@ -165,7 +165,7 @@ export const ContactsPage: React.FC = () => {
 
             <button
               onClick={() => setSelectedContact(null)}
-              className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold"
+              className="w-full py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition"
             >
               Close Drawer
             </button>

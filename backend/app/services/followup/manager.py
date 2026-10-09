@@ -79,6 +79,7 @@ async def get_revival_alerts(
         .join(OpenEvent, OpenEvent.recipient_id == EmailRecipient.id)
         .where(
             TrackedEmail.user_id == user_id,
+            OpenEvent.classification == "human_likely",
         )
         .group_by(TrackedEmail.id, EmailRecipient.id)
         .having(

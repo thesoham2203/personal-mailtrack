@@ -26,18 +26,18 @@ export const SetupDoctorPage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Stethoscope className="w-5 h-5 text-blue-600" /> System Setup Doctor
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <Stethoscope className="w-5 h-5 text-blue-600 dark:text-blue-400" /> System Setup Doctor
           </h2>
-          <p className="text-xs text-gray-500">First-run health check and configuration guidance in plain language.</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">First-run health check and configuration guidance in plain language.</p>
         </div>
 
         <button
           onClick={loadDoctor}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold shadow-sm transition"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-slate-200 rounded-lg text-xs font-semibold shadow-sm transition"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Run Diagnostics
         </button>
@@ -45,17 +45,17 @@ export const SetupDoctorPage: React.FC = () => {
 
       {/* Overall Health Card */}
       <div
-        className={`p-5 rounded-xl border flex items-center justify-between ${
+        className={`p-5 rounded-xl border flex items-center justify-between transition-colors ${
           report?.overall_healthy
-            ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-            : "bg-amber-50 border-amber-200 text-amber-900"
+            ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200"
+            : "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200"
         }`}
       >
         <div className="flex items-center gap-3">
           {report?.overall_healthy ? (
-            <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+            <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
           ) : (
-            <AlertCircle className="w-6 h-6 text-amber-600" />
+            <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
           )}
           <div>
             <h3 className="font-bold text-sm">
@@ -71,45 +71,45 @@ export const SetupDoctorPage: React.FC = () => {
       </div>
 
       {/* Diagnostics Cards */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm divide-y divide-gray-100 dark:divide-slate-800/80 overflow-hidden transition-colors">
         {/* Database */}
         <div className="p-4 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-gray-900">Database Engine</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-800">
+              <span className="text-sm font-semibold text-gray-900 dark:text-white">Database Engine</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                 {checks.database?.type || "sqlite"}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
               Async database connection ready for tracking events and activity feeds.
             </p>
           </div>
-          <span className="text-xs font-bold text-emerald-600">✓ CONNECTED</span>
+          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">✓ CONNECTED</span>
         </div>
 
         {/* Tracking Keys */}
         <div className="p-4 flex items-start justify-between">
           <div>
-            <span className="text-sm font-semibold text-gray-900">Cryptographic Signing Keys</span>
-            <p className="text-xs text-gray-500 mt-1">
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">Cryptographic Signing Keys</span>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
               HMAC-SHA256 tracking token secret configured ({checks.tracking_key?.length || 0} characters).
             </p>
           </div>
-          <span className="text-xs font-bold text-emerald-600">✓ SECURE</span>
+          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">✓ SECURE</span>
         </div>
 
         {/* Supabase Core */}
         <div className="p-4 flex items-start justify-between">
           <div>
-            <span className="text-sm font-semibold text-gray-900">Supabase Platform Core</span>
-            <p className="text-xs text-gray-500 mt-1">
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">Supabase Platform Core</span>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
               {checks.supabase?.status === "configured"
                 ? `Connected to ${checks.supabase?.url}`
                 : "Running in zero-friction local SQLite mode without cloud credentials."}
             </p>
           </div>
-          <span className="text-xs font-bold text-blue-600">
+          <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
             {checks.supabase?.status === "configured" ? "✓ CLOUD" : "ℹ LOCAL DEV"}
           </span>
         </div>
@@ -117,14 +117,14 @@ export const SetupDoctorPage: React.FC = () => {
         {/* Google OAuth */}
         <div className="p-4 flex items-start justify-between">
           <div>
-            <span className="text-sm font-semibold text-gray-900">Google OAuth (Gmail Sync)</span>
-            <p className="text-xs text-gray-500 mt-1">
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">Google OAuth (Gmail Sync)</span>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
               {checks.google_oauth?.status === "configured"
                 ? "Google OAuth Client ID & Secret configured for Gmail message correlation."
                 : "Optional. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env for background Gmail API sync."}
             </p>
           </div>
-          <span className="text-xs font-bold text-gray-400">
+          <span className="text-xs font-bold text-gray-400 dark:text-slate-500">
             {checks.google_oauth?.status === "configured" ? "✓ READY" : "ℹ OPTIONAL"}
           </span>
         </div>

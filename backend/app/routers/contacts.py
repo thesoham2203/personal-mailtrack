@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.contacts import Contact
 from app.models.events import ActivityEvent
+from app.models.tracked_emails import EmailRecipient
 from app.routers.emails import get_current_user_id
 
 router = APIRouter(prefix="/api/v1/contacts", tags=["Contacts CRM"])
@@ -120,15 +121,29 @@ async def get_contact_detail(
     if not contact:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found.")
 
-    # Fetch activity timeline for this contact's email
-    act_stmt = (
-        select(ActivityEvent)
-        .where(ActivityEvent.user_id == user_id)
-        .order_by(desc(ActivityEvent.occurred_at))
-        .limit(30)
+    # Fetch recipient IDs and tracked emails associated with this contact's email
+    recip_stmt = select(EmailRecipient.id, EmailRecipient.tracked_email_id).where(
+        EmailRecipient.email == contact.email.lower()
     )
-    all_acts = (await db.execute(act_stmt)).scalars().all()
-    # Filter events where metadata recipient_email matches this contact
+    recip_res = await db.execute(recip_stmt)
+    recip_rows = recip_res.all()
+    entity_ids = list(set([r[0] for r in recip_rows] + [r[1] for r in recip_rows]))
+
+    # Query activity timeline specifically for this contact's entities
+    if entity_ids:
+        act_stmt = (
+            select(ActivityEvent)
+            .where(
+                ActivityEvent.user_id == user_id,
+                ActivityEvent.entity_id.in_(entity_ids),
+            )
+            .order_by(desc(ActivityEvent.occurred_at))
+            .limit(50)
+        )
+        acts = (await db.execute(act_stmt)).scalars().all()
+    else:
+        acts = []
+
     timeline = [
         {
             "id": a.id,
@@ -137,8 +152,7 @@ async def get_contact_detail(
             "source": a.source,
             "metadata": a.metadata_json or {},
         }
-        for a in all_acts
-        if (a.metadata_json or {}).get("recipient_email", "").lower() == contact.email.lower()
+        for a in acts
     ]
 
     return {

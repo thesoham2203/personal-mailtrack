@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ThemeProvider } from "./context/ThemeContext";
 import { Navigation } from "./components/Navigation";
 import { ActivityPage } from "./pages/ActivityPage";
 import { EmailsPage } from "./pages/EmailsPage";
@@ -13,7 +14,7 @@ import { DocumentViewer } from "./viewer/DocumentViewer";
 import { LoginPage } from "./pages/LoginPage";
 import { isAuthenticated, logout } from "./services/auth";
 
-export const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [isAuthed, setIsAuthed] = useState<boolean>(() => isAuthenticated());
   const [activeTab, setActiveTab] = useState<string>("activity");
 
@@ -59,11 +60,19 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafd]">
+    <div className="flex min-h-screen bg-[#f8fafd] dark:bg-slate-950 text-gray-900 dark:text-slate-100 transition-colors duration-200">
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
       <main className="flex-1 ml-64 p-8 max-w-6xl">
         {renderActivePage()}
       </main>
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 };
