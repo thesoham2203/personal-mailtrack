@@ -67,6 +67,7 @@ async def get_activity_stream(
     limit: int = 50,
     offset: int = 0,
     event_type: str | None = None,
+    filter_type: str | None = None,
     db: AsyncSession = Depends(get_db),
     user_id: str = Depends(get_current_user_id),
 ):
@@ -84,6 +85,20 @@ async def get_activity_stream(
     result = await db.execute(stmt)
     activities = result.scalars().all()
 
+    filtered = []
+    for a in activities:
+        meta = a.metadata_json or {}
+        cls = meta.get("classification")
+        if filter_type == "human" and a.event_type == "email.opened" and cls != "human_likely":
+            continue
+        if filter_type == "proxy" and (a.event_type != "email.opened" or cls != "proxy_likely"):
+            continue
+        if filter_type in ("scanner", "bot") and (
+            a.event_type != "email.opened" or cls not in ("security_scanner_likely", "automation_likely")
+        ):
+            continue
+        filtered.append(a)
+
     return [
         {
             "id": a.id,
@@ -94,7 +109,7 @@ async def get_activity_stream(
             "occurred_at": a.occurred_at.isoformat(),
             "metadata": a.metadata_json or {},
         }
-        for a in activities
+        for a in filtered
     ]
 
 

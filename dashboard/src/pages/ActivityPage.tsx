@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { fetchActivity, fetchSummary } from "../services/api";
-import { Eye, MousePointer, CornerUpLeft, FileText, CheckCircle2, ShieldAlert } from "lucide-react";
+import {
+  Eye,
+  MousePointer,
+  CornerUpLeft,
+  FileText,
+  CheckCircle2,
+  ShieldAlert,
+  Shield,
+  Bot,
+  HelpCircle,
+  Layers,
+  Info,
+} from "lucide-react";
 
 export const ActivityPage: React.FC = () => {
   const [activities, setActivities] = useState<any[]>([]);
@@ -28,7 +40,14 @@ export const ActivityPage: React.FC = () => {
 
   const filteredActivities = activities.filter((a) => {
     if (filter === "human") return a.event_type === "email.opened" && a.metadata?.classification === "human_likely";
-    if (filter === "proxy") return a.event_type === "email.opened" && a.metadata?.classification !== "human_likely";
+    if (filter === "proxy") return a.event_type === "email.opened" && a.metadata?.classification === "proxy_likely";
+    if (filter === "scanner")
+      return (
+        a.event_type === "email.opened" &&
+        (a.metadata?.classification === "security_scanner_likely" ||
+          a.metadata?.classification === "automation_likely" ||
+          a.metadata?.classification === "unknown")
+      );
     if (filter === "clicks") return a.event_type === "email.clicked";
     if (filter === "replies") return a.event_type === "email.replied";
     if (filter === "documents") return a.event_type === "document.viewed";
@@ -67,6 +86,15 @@ export const ActivityPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Accuracy & Tracking Transparency Banner */}
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3 text-xs text-slate-600">
+        <Info className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
+        <div>
+          <span className="font-semibold text-slate-700">Engagement & Telemetry Notice:</span>{" "}
+          Pixel opens prove resource retrieval rather than comprehension. Inbound security scanners and mail proxies (such as Google Image Proxy) are classified separately from likely human opens to prevent engagement metric distortion.
+        </div>
+      </div>
+
       {/* Activity Timeline Table */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-wrap justify-between items-center gap-3">
@@ -75,11 +103,12 @@ export const ActivityPage: React.FC = () => {
             <p className="text-xs text-gray-500">Chronological timeline of all tracked opens, clicks, and views.</p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {[
               { id: "all", label: "All Activity" },
               { id: "human", label: "Likely Human Opens" },
               { id: "proxy", label: "Proxy / Prefetch" },
+              { id: "scanner", label: "Security Scanners & Bots" },
               { id: "clicks", label: "Clicks" },
               { id: "replies", label: "Replies" },
               { id: "documents", label: "PDF Views" },
@@ -114,8 +143,65 @@ export const ActivityPage: React.FC = () => {
               let icon = <Eye className="w-4 h-4 text-emerald-600" />;
               let title = `Email opened: "${meta.subject || "No Subject"}"`;
               let sub = meta.recipient_email || "Recipient";
+              let badge: React.ReactNode = null;
 
-              if (act.event_type === "email.clicked") {
+              if (act.event_type === "email.opened") {
+                const cls = meta.classification;
+                if (cls === "human_likely") {
+                  icon = <Eye className="w-4 h-4 text-emerald-600" />;
+                  title = `Email opened: "${meta.subject || "No Subject"}"`;
+                  badge = (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Likely Human
+                    </span>
+                  );
+                } else if (cls === "proxy_likely") {
+                  icon = <Layers className="w-4 h-4 text-blue-600" />;
+                  title = `Proxy prefetch: "${meta.subject || "No Subject"}"`;
+                  sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Image proxy prefetch"}`;
+                  badge = (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                      <Shield className="w-3 h-3" />
+                      Proxy / Prefetch
+                    </span>
+                  );
+                } else if (cls === "security_scanner_likely") {
+                  icon = <ShieldAlert className="w-4 h-4 text-amber-600" />;
+                  title = `Security scanner inspection: "${meta.subject || "No Subject"}"`;
+                  sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Inbound security scan"}`;
+                  badge = (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-300">
+                      <ShieldAlert className="w-3 h-3" />
+                      Security Scanner
+                    </span>
+                  );
+                } else if (cls === "automation_likely") {
+                  icon = <Bot className="w-4 h-4 text-orange-600" />;
+                  title = `Automated bot request: "${meta.subject || "No Subject"}"`;
+                  sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Automated client"}`;
+                  badge = (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
+                      <Bot className="w-3 h-3" />
+                      Automated Bot
+                    </span>
+                  );
+                } else {
+                  icon = <HelpCircle className="w-4 h-4 text-gray-500" />;
+                  title = `Unverified open request: "${meta.subject || "No Subject"}"`;
+                  sub = `${meta.recipient_email || "Recipient"} · ${meta.reason || "Unverified client pattern"}`;
+                  badge = (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                      <HelpCircle className="w-3 h-3" />
+                      Unverified
+                    </span>
+                  );
+                }
+
+                if (meta.is_shared_pixel) {
+                  sub += ` · Shared pixel (${meta.recipient_count || 2} recipients)`;
+                }
+              } else if (act.event_type === "email.clicked") {
                 icon = <MousePointer className="w-4 h-4 text-blue-600" />;
                 title = `Link clicked in "${meta.subject || "Email"}"`;
                 sub = `Destination: ${meta.destination_url || "Link"}`;
@@ -130,8 +216,6 @@ export const ActivityPage: React.FC = () => {
                 title = `Tracked email sent: "${meta.subject || "No Subject"}"`;
               }
 
-              const isProxy = meta.classification && meta.classification !== "human_likely";
-
               return (
                 <div key={act.id} className="p-4 hover:bg-gray-50 flex items-center justify-between transition">
                   <div className="flex items-center gap-3.5">
@@ -141,12 +225,7 @@ export const ActivityPage: React.FC = () => {
                     <div>
                       <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
                         {title}
-                        {isProxy && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                            <ShieldAlert className="w-3 h-3" />
-                            {meta.classification === "proxy_likely" ? "Proxy/Prefetch" : "Scanner Bot"}
-                          </span>
-                        )}
+                        {badge}
                       </div>
                       <div className="text-xs text-gray-500 mt-0.5">{sub}</div>
                     </div>

@@ -12,8 +12,11 @@ export async function fetchSummary(days = 30) {
   return res.json();
 }
 
-export async function fetchActivity(limit = 50, eventType?: string) {
-  const url = `${API_BASE}/api/v1/analytics/activity?limit=${limit}${eventType ? `&event_type=${eventType}` : ""}`;
+export async function fetchActivity(limit = 50, eventType?: string, filterType?: string) {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (eventType) params.set("event_type", eventType);
+  if (filterType) params.set("filter_type", filterType);
+  const url = `${API_BASE}/api/v1/analytics/activity?${params.toString()}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch activity");
   return res.json();

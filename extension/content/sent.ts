@@ -12,6 +12,7 @@ interface EmailSummary {
   id: string;
   subject?: string;
   open_count: number;
+  human_open_count: number;
   click_count: number;
   has_replied: boolean;
   is_hot: boolean;
@@ -77,14 +78,19 @@ export async function decorateMessageRows(): Promise<void> {
       badge.style.fontWeight = "bold";
       badge.style.cursor = "help";
 
+      const humanOpens = email.human_open_count ?? 0;
+      const rawOpens = email.open_count ?? 0;
+
       if (email.is_hot) {
-        badge.innerHTML = `<span style="color: #e37400;" title="🔥 Hot Conversation (${email.open_count} opens)">🔥✓✓</span>`;
+        badge.innerHTML = `<span style="color: #e37400;" title="🔥 Hot Conversation (${humanOpens} verified opens)">🔥✓✓</span>`;
       } else if (email.has_replied) {
         badge.innerHTML = `<span style="color: #1a73e8;" title="↩ Replied">↩✓✓</span>`;
       } else if (email.click_count > 0) {
         badge.innerHTML = `<span style="color: #1e8e3e;" title="↗ Link Clicked (${email.click_count} clicks)">↗✓✓</span>`;
-      } else if (email.open_count > 0) {
-        badge.innerHTML = `<span style="color: #1e8e3e;" title="✓✓ Opened (${email.open_count} times)">✓✓</span>`;
+      } else if (humanOpens > 0) {
+        badge.innerHTML = `<span style="color: #1e8e3e;" title="✓✓ Opened (${humanOpens} ${humanOpens === 1 ? "time" : "times"})">✓✓</span>`;
+      } else if (rawOpens > 0) {
+        badge.innerHTML = `<span style="color: #b08800;" title="~✓ Non-human / Bot prefetch only (${rawOpens} raw requests)">~✓</span>`;
       } else {
         badge.innerHTML = `<span style="color: #5f6368;" title="✓ Sent & Tracked (Unopened)">✓</span>`;
       }

@@ -207,10 +207,12 @@ async def list_emails(
         has_replied = any(r.reply_received_at is not None for r in em.recipients)
         is_hot = total_human_opens >= 3
 
-        # Apply in-memory filters if specified
-        if filter_status == "opened" and total_raw_opens == 0:
+        # Apply in-memory filters if specified (uses verified human engagement per PRD Section 22/23)
+        if filter_status == "opened" and total_human_opens == 0:
             continue
-        if filter_status == "unopened" and total_raw_opens > 0:
+        if filter_status == "unopened" and total_human_opens > 0:
+            continue
+        if filter_status == "raw_opened" and total_raw_opens == 0:
             continue
         if filter_status == "clicked" and total_clicks == 0:
             continue

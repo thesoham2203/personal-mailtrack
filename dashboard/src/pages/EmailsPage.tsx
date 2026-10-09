@@ -107,9 +107,13 @@ export const EmailsPage: React.FC = () => {
                         <span className="text-blue-600" title="↗ Link Clicked">
                           ↗✓✓
                         </span>
-                      ) : em.open_count > 0 ? (
-                        <span className="text-emerald-600" title="✓✓ Opened">
+                      ) : (em.human_open_count ?? 0) > 0 ? (
+                        <span className="text-emerald-600" title={`✓✓ Human Opened (${em.human_open_count} verified opens)`}>
                           ✓✓
+                        </span>
+                      ) : em.open_count > 0 ? (
+                        <span className="text-amber-500 font-mono text-sm" title={`~✓ Non-human / Bot prefetch only (${em.open_count} raw opens)`}>
+                          ~✓
                         </span>
                       ) : (
                         <span className="text-gray-400" title="✓ Sent (Unopened)">
@@ -133,7 +137,11 @@ export const EmailsPage: React.FC = () => {
                   <div className="flex items-center gap-4 flex-shrink-0">
                     <div className="text-right text-xs">
                       <div className="font-semibold text-gray-700">
-                        {em.open_count} {em.open_count === 1 ? "open" : "opens"} · {em.click_count} clicks
+                        {em.human_open_count ?? 0} {em.human_open_count === 1 ? "human open" : "human opens"}
+                        {em.open_count > (em.human_open_count ?? 0) && (
+                          <span className="text-gray-400 font-normal"> ({em.open_count} raw)</span>
+                        )}
+                        {" · "}{em.click_count} clicks
                       </div>
                       <div className="text-gray-400 text-[11px]">{dateStr}</div>
                     </div>

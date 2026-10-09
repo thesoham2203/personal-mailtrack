@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.events import ClickEvent, OpenEvent
 from app.models.tracked_emails import EmailRecipient, TrackedEmail, TrackedLink
@@ -47,9 +48,10 @@ class TrackingEngine:
 
         recipient_id = payload.get("rid")
 
-        # Lookup recipient and parent email
+        # Lookup recipient and parent email (with recipients eagerly loaded)
         stmt = (
             select(EmailRecipient, TrackedEmail)
+            .options(selectinload(TrackedEmail.recipients))
             .join(TrackedEmail, EmailRecipient.tracked_email_id == TrackedEmail.id)
             .where(EmailRecipient.id == recipient_id)
         )
@@ -61,15 +63,21 @@ class TrackingEngine:
         recipient, email = row
         occurred_at = datetime.now(UTC)
 
-        # Classify open
+        # Retain prior state before updating
+        prior_last_open = recipient.last_open_at
+        prior_raw_count = recipient.raw_open_count
+
+        # Classify open using timing, IP, signatures, and burst detection
         classification, confidence, reason = EventClassifier.classify_open(
             sent_at=email.sent_at,
             occurred_at=occurred_at,
             user_agent=user_agent,
             ip_address=ip_address,
+            last_open_at=prior_last_open,
+            raw_open_count=prior_raw_count,
         )
 
-        # Record raw open event
+        # Record raw open event (PRD: never delete or skip raw events for forensic fidelity)
         open_event = OpenEvent(
             recipient_id=recipient.id,
             occurred_at=occurred_at,
@@ -90,23 +98,43 @@ class TrackingEngine:
         if classification == "human_likely":
             recipient.human_open_count += 1
 
-        # Project to universal activity timeline
-        await activity_bus.record_activity(
-            session=session,
-            user_id=email.user_id,
-            event_type="email.opened",
-            entity_type="email_recipient",
-            entity_id=recipient.id,
-            source="tracking_pixel",
-            metadata={
-                "subject": email.subject,
-                "recipient_email": recipient.email,
-                "classification": classification,
-                "confidence": confidence,
-                "reason": reason,
-            },
-            occurred_at=occurred_at,
-        )
+        # Multi-recipient attribution check (PRD Section 10)
+        recipient_list = [r.email for r in (email.recipients or [])]
+        is_shared_pixel = len(recipient_list) > 1
+
+        # Debounce activity timeline entries for rapid automated scanner bursts
+        # (Preserves raw OpenEvent table while preventing feed spam from repeated crawler hits)
+        should_emit_activity = True
+        if prior_last_open:
+            delta_last = (occurred_at - prior_last_open).total_seconds()
+            if classification in ("security_scanner_likely", "automation_likely") and delta_last < 30.0:
+                should_emit_activity = False
+            elif classification == "human_likely" and delta_last < 2.0:
+                should_emit_activity = False
+
+        if should_emit_activity:
+            await activity_bus.record_activity(
+                session=session,
+                user_id=email.user_id,
+                event_type="email.opened",
+                entity_type="email_recipient",
+                entity_id=recipient.id,
+                source="tracking_pixel",
+                metadata={
+                    "subject": email.subject,
+                    "recipient_email": recipient.email,
+                    "classification": classification,
+                    "confidence": confidence,
+                    "reason": reason,
+                    "is_bot": classification in ("security_scanner_likely", "automation_likely"),
+                    "is_proxy": classification == "proxy_likely",
+                    "is_human": classification == "human_likely",
+                    "is_shared_pixel": is_shared_pixel,
+                    "recipient_count": len(recipient_list),
+                    "all_recipients": recipient_list if is_shared_pixel else [recipient.email],
+                },
+                occurred_at=occurred_at,
+            )
 
         await session.commit()
         return TRANSPARENT_GIF_BYTES
