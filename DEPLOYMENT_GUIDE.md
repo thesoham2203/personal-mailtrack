@@ -175,6 +175,7 @@ Fill in the values from your Supabase credentials and generated secrets:
 
 ```
 APP_ENV                     = production
+PYTHON_VERSION              = 3.12.8
 API_BASE_URL                = https://personal-mailtrack-api.onrender.com
 TRACKING_BASE_URL           = https://personal-mailtrack-api.onrender.com
 APP_BASE_URL                = https://personal-mailtrack.pages.dev
